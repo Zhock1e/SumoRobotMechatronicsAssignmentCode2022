@@ -1,0 +1,130 @@
+const int photoresistor = A0;
+#define LeftEnable 3
+#define LDIRA 4
+#define LDIRB 5
+
+#define RightEnable 6
+#define RDIRA 7
+#define RDIRB 8
+
+#define echoPin 10
+#define trigPin 9 
+
+
+
+void setup() {
+  Serial.begin(9600);
+  setMotor(-127, LeftEnable, LDIRA, LDIRB);
+  pinMode(photoresistor, INPUT);
+
+  long duration; 
+  int distance; 
+  
+  pinMode(LeftEnable, OUTPUT);
+  pinMode(LDIRA, OUTPUT);
+  pinMode(LDIRB, OUTPUT);
+
+  pinMode(RightEnable, OUTPUT);
+  pinMode(RDIRA, OUTPUT);
+  pinMode(RDIRB, OUTPUT);
+
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  Serial.begin(9600);
+  
+}
+
+void setMotor(float motorSpeed, int PWM, int dir1, int dir2) {
+  if (motorSpeed != 0) {
+  if (motorSpeed > 0) {
+      analogWrite(PWM, motorSpeed);
+      digitalWrite(dir1, HIGH);
+      digitalWrite(dir2, LOW);
+  } else if (motorSpeed < 0) {
+      motorSpeed = abs(motorSpeed);
+      analogWrite(PWM, motorSpeed);
+      digitalWrite(dir1, LOW);
+      digitalWrite(dir2, HIGH);
+  }
+  } else {
+  digitalWrite(PWM, LOW);
+  }
+}
+
+void forwards(){
+  long duration; 
+  int distance;
+Serial.println("forward");
+  setMotor(255, LeftEnable, LDIRA, LDIRB);
+  setMotor(255, RightEnable, RDIRA, RDIRB);
+  delay(2000);
+  killSearch();
+  if (distance <= 100)
+  setMotor(255, LeftEnable, LDIRA, LDIRB);
+  setMotor(255, RightEnable, RDIRA, RDIRB);
+  delay(4000);
+
+}
+
+void reverse(){
+Serial.println("reverse");
+  setMotor(-255, LeftEnable, LDIRA, LDIRB);
+  setMotor(-255, RightEnable, RDIRA, RDIRB);
+  delay(2000);
+}
+  
+void killSearch() {
+  long duration; 
+  int distance;
+Serial.println("Locked in searching...");
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2); 
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  duration = pulseIn(echoPin, HIGH);
+  distance = duration * 0.034 / 2;
+}
+
+  
+void spinSearch() {
+  long duration; 
+  int distance;
+Serial.println("searching...");
+  setMotor(-255, LeftEnable, LDIRA, LDIRB);
+  setMotor(255, RightEnable, RDIRA, RDIRB);
+  delay(200);
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2); 
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  duration = pulseIn(echoPin, HIGH);
+  distance = duration * 0.034 / 2;
+  
+  if (distance <= 100);
+  {
+    forwards();
+    Serial.println("Something is within 100 units from me I am going to attack");
+  }
+}
+
+
+/// NOW FOR THE LOOP
+
+void loop() {
+  int photoresistorStatus = analogRead(photoresistor);   
+   if (photoresistorStatus <=300) { //all of the light has been absorbed
+    Serial.println("On black arena");
+    spinSearch();
+   }
+    
+  else {
+    Serial.println("On white line");
+    void reverse();
+    Serial.println("reverse");
+    setMotor(-255, LeftEnable, LDIRA, LDIRB);
+    setMotor(-255, RightEnable, RDIRA, RDIRB);
+    delay(2000);
+  }
+}
