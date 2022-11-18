@@ -1,0 +1,22 @@
+const int photoresistor = A0;  //the number of the LDR pin
+
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(photoresistor, INPUT);
+}
+
+
+void loop() {
+  int photoresistorStatus = analogRead(photoresistor);   
+   if (photoresistorStatus <=300) { //all of the light has been absorbed
+    Serial.println("On black arena");
+   
+   }
+
+   
+  else {
+    Serial.println("On white line");
+  }
+ 
+}
