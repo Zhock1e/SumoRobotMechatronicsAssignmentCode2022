@@ -1,0 +1,65 @@
+//tookme 34min to set up the motors
+
+#define LeftEnable 3
+#define LDIRA 4
+#define LDIRB 5
+
+#define RightEnable 6
+#define RDIRA 7
+#define RDIRB 8
+
+
+ 
+void setup() {
+  // put your setup code here, to run once:
+  pinMode(LeftEnable, OUTPUT);
+  pinMode(LDIRA, OUTPUT);
+  pinMode(LDIRB, OUTPUT);
+
+  pinMode(RightEnable, OUTPUT);
+  pinMode(RDIRA, OUTPUT);
+  pinMode(RDIRB, OUTPUT);
+
+ 
+  Serial.begin(9600);
+  setMotor(-127, LeftEnable, LDIRA, LDIRB);
+}
+
+
+void setMotor(float motorSpeed, int PWM, int dir1, int dir2) {
+  if (motorSpeed != 0) {
+  if (motorSpeed > 0) {
+      analogWrite(PWM, motorSpeed);
+      digitalWrite(dir1, HIGH);
+      digitalWrite(dir2, LOW);
+  } else if (motorSpeed < 0) {
+      motorSpeed = abs(motorSpeed);
+      analogWrite(PWM, motorSpeed);
+      digitalWrite(dir1, LOW);
+      digitalWrite(dir2, HIGH);
+  }
+  } else {
+  digitalWrite(PWM, LOW);
+  }
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  Serial.println("half forward");
+  setMotor(127, LeftEnable, LDIRA, LDIRB);
+  setMotor(127, RightEnable, RDIRA, RDIRB);
+  delay(2000);
+  Serial.println("full forward");
+  setMotor(255, LeftEnable, LDIRA, LDIRB);
+  setMotor(255, RightEnable, RDIRA, RDIRB);
+  delay(2000);
+  Serial.println("half backward");
+  setMotor(-127, LeftEnable, LDIRA, LDIRB);
+  setMotor(-127, RightEnable, RDIRA, RDIRB);
+  delay(2000);
+  Serial.println("full backward");
+  setMotor(-255, LeftEnable, LDIRA, LDIRB);
+  setMotor(-255, RightEnable, RDIRA, RDIRB);
+  delay(2000);
+}
+
